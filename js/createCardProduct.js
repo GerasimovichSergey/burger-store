@@ -5,7 +5,7 @@ export function createCardProduct(product) {
 
   li.classList.add('.catalog__item');
   li.innerHTML = ` 
-    <article class="product">
+    <article class="product" data-id-product=${product.id}>
       <img class="product__image" src="${API_URL}/${product.image}" alt="${product.title}">
       <p class="product__price">${product.price}<span class="currency">₽</span></p>
       <h3 class="product__title">

@@ -1,3 +1,4 @@
+import { API_URL, PREFIX_PRODUCT } from './const.js';
 import {
   modalProduct,
   modalProductTitle,
@@ -5,12 +6,16 @@ import {
   modalProductDescription,
   ingredientsList,
   ingredientsCalories,
-  modalProductPriceCount
+  modalProductPriceCount,
+  modalProductBtn
 } from './elemets.js';
+import { getData } from './getData.js';
 
-export function openModal(product) {
+export async function openModal(id) {
+  const product = await getData(`${API_URL}${PREFIX_PRODUCT}/${id}`);
+
   modalProductTitle.textContent = product.title;
-  modalProductImage.src = product.image;
+  modalProductImage.src = `${API_URL}/${product.image}`;
   modalProductDescription.textContent = product.description;
   ingredientsCalories.textContent = `${product.weight}г, ккал ${product.calories}`;
   modalProductPriceCount.textContent = product.price;
@@ -26,6 +31,7 @@ export function openModal(product) {
   });
 
   ingredientsList.append(...ingredientsListItems);
+  modalProductBtn.dataset.idProduct = product.id;
 
   modalProduct.classList.add('modal_open');
 }
