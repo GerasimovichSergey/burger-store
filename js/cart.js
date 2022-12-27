@@ -1,8 +1,20 @@
-import { catalogList, countAmount, modalProductBtn, orderCount, orderList, orderTotalAmount } from './elemets.js';
+import {
+  catalogList,
+  countAmount,
+  modalDelivery,
+  modalProductBtn,
+  order,
+  orderCount,
+  orderList,
+  orderSubmit,
+  orderTotalAmount,
+  orderWrapTitle
+} from './elemets.js';
 import { getData } from './getData.js';
 import { API_URL, PREFIX_PRODUCT } from './const.js';
+import { orderController } from './modalController.js';
 
-export function getCart() {
+function getCart() {
   const cartList = localStorage.getItem('cart');
 
   if (cartList) {
@@ -14,6 +26,9 @@ export function getCart() {
 
 async function renderCartList() {
   const cartList = getCart();
+
+  orderSubmit.disabled = !cartList.length;
+
   const allIdProduct = cartList.map(item => item.id);
   const data = cartList.length
     ? await getData(`${API_URL}${PREFIX_PRODUCT}?list=${allIdProduct}`)
@@ -84,6 +99,11 @@ function removeCart(id) {
   updateCart(cartList);
 }
 
+export function clearCart() {
+  localStorage.removeItem('cart');
+  renderCartList();
+}
+
 function cartController() {
   catalogList.addEventListener('click', ({ target }) => {
     if (target.closest('.product__add')) {
@@ -106,10 +126,25 @@ function cartController() {
     if (targetMinus) {
       removeCart(targetMinus.dataset.idProduct);
     }
-  })
+  });
+
+  orderWrapTitle.addEventListener('click', () => {
+    order.classList.toggle('order_open');
+  });
+
+  orderSubmit.addEventListener('click', () => {
+    modalDelivery.classList.add('modal_open');
+  });
+
+  modalDelivery.addEventListener('click', ({ target }) => {
+    if (target.closest('.modal__close') || modalDelivery === target) {
+      modalDelivery.classList.remove('modal_open');
+    }
+  });
 }
 
 export function cartInit() {
   cartController();
   renderCartList();
+  orderController(getCart);
 }
